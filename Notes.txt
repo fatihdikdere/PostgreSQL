@@ -1,1 +1,57 @@
-CREATE DATABASE test;
+CREATE DATABASE test
+
+CREATE TABLE person
+(
+	id BIGSERIAL NOT NULL PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
+	gender VARCHAR(7) NOT NULL,
+	date_of_birth DATE NOT NULL,
+	email VARCHAR(150)
+)
+
+ALTER TABLE person ADD CONSTRAINT unique_email_address UNIQUE (email)
+--ALTER TABLE person DROP CONSTRAINT unique_email_address
+
+ALTER TABLE person ADD UNIQUE (email)
+
+ALTER TABLE person ADD CONSTRAINT gender_constraint CHECK (gender= 'female' OR gender = 'male')
+
+--DROP TABLE person
+
+INSERT INTO person (first_name, last_name, gender, date_of_birth) VALUES ('Fatih', 'D', 'male', DATE '1970-05-30')
+--ON CONFLICT (id) DO NOTHING
+--ON CONFLICT (id) DO UPDATE SET ... = EXCLUDED....
+
+DELETE FROM person WHERE id = 1011
+
+UPDATE person SET email = 'fatihd@fatihd.com' WHERE id = 1
+
+SELECT 
+	gender,
+	COUNT(*) gender_count
+FROM person
+WHERE 1 = 1
+  --AND email IS NOT NULL
+GROUP BY gender
+HAVING COUNT(*) > 0
+ORDER BY gender DESC
+--OFFSET 1
+--LIMIT 1
+--FETCH FIRST 1 ROW ONLY 
+
+SELECT 
+	DISTINCT gender
+FROM person
+
+SELECT date_of_birth, AGE(NOW(), date_of_birth) FROM person
+
+SELECT NOW()
+
+SELECT NOW()::DATE
+
+SELECT NOW()::TIME
+
+SELECT NOW() - INTERVAL '1 YEARS'
+
+SELECT EXTRACT(YEAR FROM NOW())
