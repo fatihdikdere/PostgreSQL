@@ -9,6 +9,23 @@ CREATE TABLE person
 	date_of_birth DATE NOT NULL,
 	email VARCHAR(150)
 )
+CREATE TABLE car
+(
+	id BIGSERIAL NOT NULL PRIMARY KEY,
+	make VARCHAR(100) NOT NULL,
+	model VARCHAR(100) NOT NULL,
+	price NUMERIC(19, 2) NOT NULL,
+	person_id BIGINT REFERENCES person(id),
+	UNIQUE(person_id)
+)
+
+CREATE TABLE house
+(
+	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	address VARCHAR(500) NOT NULL,
+	person_uid BIGINT REFERENCES person(id),
+	UNIQUE(person_id)
+)
 
 ALTER TABLE person ADD CONSTRAINT unique_email_address UNIQUE (email)
 --ALTER TABLE person DROP CONSTRAINT unique_email_address
@@ -22,6 +39,15 @@ ALTER TABLE person ADD CONSTRAINT gender_constraint CHECK (gender= 'female' OR g
 INSERT INTO person (first_name, last_name, gender, date_of_birth) VALUES ('Fatih', 'D', 'male', DATE '1970-05-30')
 --ON CONFLICT (id) DO NOTHING
 --ON CONFLICT (id) DO UPDATE SET ... = EXCLUDED....
+
+INSERT INTO car (make, model, price, person_id)
+VALUES ('GMC', 'Acadia', 177.52, 1)
+
+INSERT INTO house (address, person_id)
+VALUES ('ist_anadolu', 1)
+
+INSERT INTO house (address, person_id)
+VALUES ('ist_avrupa', 3)
 
 DELETE FROM person WHERE id = 1011
 
@@ -46,6 +72,21 @@ FROM person
 
 SELECT date_of_birth, AGE(NOW(), date_of_birth) FROM person
 
+SELECT  
+	*
+FROM person 
+JOIN car ON person.id = car.person_id
+
+SELECT  
+	*
+FROM person 
+LEFT JOIN car ON person.id = car.person_id
+WHERE car.* IS NULL
+
+SELECT nextval('person_id_seq'::regclass)
+
+ALTER SEQUENCE person_id_seq RESTART WITH 7
+
 SELECT NOW()
 
 SELECT NOW()::DATE
@@ -55,3 +96,9 @@ SELECT NOW()::TIME
 SELECT NOW() - INTERVAL '1 YEARS'
 
 SELECT EXTRACT(YEAR FROM NOW())
+
+SELECT * FROM pg_available_extensions
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+
+SELECT uuid_generate_v4()
